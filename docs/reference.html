@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reference — Raspberry Pi Setup</title>
+        <style>
+:root {
+    --bg:       #282a36;
+    --bg2:      #1e1f29;
+    --bg3:      #21222c;
+    --surface:  #44475a;
+    --fg:       #f8f8f2;
+    --fg-muted: #6272a4;
+    --purple:   #bd93f9;
+    --pink:     #ff79c6;
+    --cyan:     #8be9fd;
+    --green:    #50fa7b;
+    --yellow:   #f1fa8c;
+    --red:      #ff5555;
+    --orange:   #ffb86c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: var(--bg2);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+  /* ── Header ── */
+  header {
+      background: var(--bg3);
+      border-bottom: 2px solid var(--purple);
+      padding: 2rem 2.5rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+  }
+  header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+  }
+  header p {
+      color: var(--fg-muted);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+  }
+  .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+  }
+  .nav-links a {
+      color: var(--fg-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 3px 10px;
+      border: 1px solid var(--surface);
+      border-radius: 4px;
+      transition: all 0.15s;
+  }
+  .nav-links a:hover { border-color: var(--purple); color: var(--purple); }
+
+  /* ── Layout ── */
+  main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 2.5rem;
+  }
+
+  /* ── Sections ── */
+  section {
+      margin-bottom: 3rem;
+  }
+  section h2 {
+      font-size: 1.1rem;
+      color: var(--cyan);
+      border-left: 3px solid var(--cyan);
+      padding-left: 0.75rem;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+  }
+
+  /* ── Keybind table ── */
+  .keytable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+  }
+  .keytable thead th {
+      background: var(--bg3);
+      color: var(--fg-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--surface);
+  }
+  .keytable tbody tr {
+      border-bottom: 1px solid #2a2c3a;
+      transition: background 0.1s;
+  }
+  .keytable tbody tr:hover { background: rgba(68,71,90,0.35); }
+  .keytable td {
+      padding: 7px 12px;
+      vertical-align: middle;
+  }
+  .keytable td:first-child {
+      white-space: nowrap;
+      width: 1%;
+  }
+
+  /* ── Key badges ── */
+  .keys {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      flex-wrap: nowrap;
+  }
+  kbd {
+      display: inline-block;
+      background: var(--bg3);
+      border: 1px solid var(--surface);
+      border-bottom: 2px solid var(--surface);
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 0.78rem;
+      font-family: inherit;
+      color: var(--yellow);
+      white-space: nowrap;
+      line-height: 1.5;
+  }
+  kbd.mod { color: var(--pink); }
+  .plus { color: var(--fg-muted); font-size: 0.7rem; }
+
+  /* ── Description text ── */
+  .desc { color: var(--fg); font-size: 0.88rem; }
+  .note { color: var(--fg-muted); font-size: 0.8rem; font-style: italic; }
+
+  /* ── Subsection labels ── */
+  .sub-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--purple);
+      margin: 1.5rem 0 0.5rem;
+      padding-left: 2px;
+  }
+
+  /* ── Code blocks ── */
+  pre {
+      background: var(--bg3);
+      border: 1px solid var(--surface);
+      border-left: 3px solid var(--green);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      color: var(--fg);
+      margin-bottom: 1rem;
+  }
+  code { color: var(--green); font-family: inherit; }
+
+  /* ── Alert boxes ── */
+  .callout {
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      border-left: 3px solid;
+  }
+  .callout-tip    { background: rgba(80,250,123,0.07); border-color: var(--green);  color: var(--green); }
+  .callout-warn   { background: rgba(255,184,108,0.07); border-color: var(--orange); color: var(--orange); }
+  .callout-info   { background: rgba(139,233,253,0.07); border-color: var(--cyan);  color: var(--cyan); }
+  .callout strong { font-weight: 700; }
+
+  /* ── Mode badges ── */
+  .mode-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-left: 4px;
+      vertical-align: middle;
+  }
+  .mode-resize { background: rgba(189,147,249,0.2); color: var(--purple); }
+  .mode-gaps   { background: rgba(139,233,253,0.2); color: var(--cyan); }
+  .mode-system { background: rgba(255,85,85,0.2); color: var(--red); }
+
+  /* ── Two-column grid ── */
+  .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+  }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── Card boxes ── */
+  .card {
+      background: var(--bg3);
+      border: 1px solid var(--surface);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+  }
+  .card h3 {
+      color: var(--purple);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+  }
+  .card p { font-size: 0.85rem; color: var(--fg-muted); }
+  .card code { color: var(--cyan); }
+
+  /* ── Footer ── */
+  footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--fg-muted);
+      font-size: 0.75rem;
+      border-top: 1px solid var(--surface);
+      margin-top: 2rem;
+  }
+        </style>
+    </head>
+    <body>
+
+        <header>
+            <h1>◆ Reference — Raspberry Pi 5</h1>
+            <p>Dracula theme · alacritty· polybar · picom · ranger</p>
+            <nav class="nav-links">
+                <a href="#basics">Basics</a>
+                <a href="#focus">Focus & Move</a>
+                <a href="#workspaces">Workspaces</a>
+                <a href="#layout">Layout</a>
+                <a href="#modes">Modes</a>
+                <a href="#apps">Apps</a>
+                <a href="#alacritty">Alacritty</a>
+                <a href="#ranger">Ranger</a>
+                <a href="#bash">Bash aliases</a>
+                <a href="#system">System</a>
+                <a href="#setup">Setup notes</a>
+            </nav>
+        </header>
+
+        <main>
+
+            <!-- ── MOD KEY NOTE ──────────────────────────────────── -->
+            <div class="callout callout-info" style="margin-top:1.5rem">
+                <strong>Mod key = Super (Win key).</strong>
+                Every binding below that says <kbd class="mod">Mod</kbd> means the Win/Super key.
+            </div>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="basics">
+                <h2>Basics</h2>
+
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Return</kbd></span></td>
+                            <td class="desc">Open terminal (alacritty)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>d</kbd></span></td>
+                            <td class="desc">App launcher (rofi)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>b</kbd></span></td>
+                            <td class="desc">Open browser (Firefox ESR)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>v</kbd></span></td>
+                            <td class="desc">Open ranger (file manager in terminal)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>F3</kbd></span></td>
+                            <td class="desc">Open Thunar (GUI file manager)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>q</kbd></span></td>
+                            <td class="desc">Kill focused window</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>m</kbd></span></td>
+                            <td class="desc">Toggle polybar visibility</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="focus">
+                <h2>Focus &amp; Move Windows</h2>
+
+                <div class="callout callout-tip">
+                    <strong>Vim-style navigation throughout.</strong> hjkl = left/down/up/right. Arrow keys also work everywhere.
+                </div>
+
+                <p class="sub-label">Focus (move cursor to window)</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>h</kbd></span></td>
+                            <td class="desc">Focus left</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>j</kbd></span></td>
+                            <td class="desc">Focus down</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>k</kbd></span></td>
+                            <td class="desc">Focus up</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>l</kbd></span></td>
+                            <td class="desc">Focus right</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>a</kbd></span></td>
+                            <td class="desc">Focus parent container</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Space</kbd></span></td>
+                            <td class="desc">Toggle focus: tiling ↔ floating</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Move window</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>h</kbd></span></td>
+                            <td class="desc">Move window left</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>j</kbd></span></td>
+                            <td class="desc">Move window down</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>k</kbd></span></td>
+                            <td class="desc">Move window up</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>l</kbd></span></td>
+                            <td class="desc">Move window right</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Floating windows</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>Space</kbd></span></td>
+                            <td class="desc">Toggle floating for focused window</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>s</kbd></span></td>
+                            <td class="desc">Toggle sticky (window follows all workspaces)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Mouse drag</kbd></span></td>
+                            <td class="desc">Drag floating window</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Scratchpad (hidden window store)</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>-</kbd></span></td>
+                            <td class="desc">Send window to scratchpad</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>-</kbd></span></td>
+                            <td class="desc">Show/cycle scratchpad windows</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="workspaces">
+                <h2>Workspaces</h2>
+
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>1–8</kbd></span></td>
+                            <td class="desc">Switch to workspace 1–8</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>1–8</kbd></span></td>
+                            <td class="desc">Move window to workspace 1–8 (and follow it)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Ctrl</kbd><span class="plus">+</span><kbd>1–8</kbd></span></td>
+                            <td class="desc">Move window to workspace 1–8 (stay on current)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Ctrl</kbd><span class="plus">+</span><kbd>→</kbd></span></td>
+                            <td class="desc">Next workspace</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Ctrl</kbd><span class="plus">+</span><kbd>←</kbd></span></td>
+                            <td class="desc">Previous workspace</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>b</kbd></span></td>
+                            <td class="desc">Move window to last workspace (and follow)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout callout-tip">
+                    <strong>Auto back-and-forth is on.</strong> Press <kbd class="mod">Mod</kbd>+<kbd>N</kbd> on your current workspace to jump back to the previous one instantly.
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="layout">
+                <h2>Layout &amp; Splitting</h2>
+
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>t</kbd></span></td>
+                            <td class="desc">Toggle split direction (horizontal ↔ vertical)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>e</kbd></span></td>
+                            <td class="desc">Toggle split layout</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>s</kbd></span></td>
+                            <td class="desc">Stacking layout</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>w</kbd></span></td>
+                            <td class="desc">Tabbed layout</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>f</kbd></span></td>
+                            <td class="desc">Fullscreen toggle</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Border style</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>u</kbd></span></td>
+                            <td class="desc">No border</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>y</kbd></span></td>
+                            <td class="desc">Pixel border (2px)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>n</kbd></span></td>
+                            <td class="desc">Normal border (with title bar)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="modes">
+                <h2>Modes</h2>
+                <p class="note" style="margin-bottom:1rem">Modes change what your keys do temporarily. Press <kbd>Escape</kbd> or <kbd>Enter</kbd> to exit any mode.</p>
+
+                <p class="sub-label">Resize mode <span class="mode-badge mode-resize">RESIZE</span></p>
+                <div class="callout callout-info">Enter with <kbd class="mod">Mod</kbd>+<kbd>r</kbd></div>
+                <table class="keytable">
+                    <thead><tr><th>Key (in resize mode)</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>h</kbd></td><td class="desc">Shrink width by 5px</td></tr>
+                        <tr><td><kbd>l</kbd></td><td class="desc">Grow width by 5px</td></tr>
+                        <tr><td><kbd>k</kbd></td><td class="desc">Shrink height by 5px</td></tr>
+                        <tr><td><kbd>j</kbd></td><td class="desc">Grow height by 5px</td></tr>
+                        <tr><td><kbd>←→↑↓</kbd></td><td class="desc">Same but 10px steps</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Gap mode <span class="mode-badge mode-gaps">GAPS</span></p>
+                <div class="callout callout-info">Enter with <kbd class="mod">Mod</kbd>+<kbd>Shift</kbd>+<kbd>g</kbd></div>
+                <table class="keytable">
+                    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>o</kbd></td><td class="desc">Enter outer gaps sub-mode</td></tr>
+                        <tr><td><kbd>i</kbd></td><td class="desc">Enter inner gaps sub-mode</td></tr>
+                        <tr><td><kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd></td><td class="desc">Increase / decrease / remove gaps (current workspace)</td></tr>
+                        <tr><td><kbd>Shift</kbd>+<kbd>+/-/0</kbd></td><td class="desc">Same but applies to ALL workspaces</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">System mode <span class="mode-badge mode-system">SYSTEM</span></p>
+                <div class="callout callout-warn">Enter with <kbd class="mod">Mod</kbd>+<kbd>0</kbd> — be careful in here!</div>
+                <table class="keytable">
+                    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>l</kbd></td><td class="desc">Lock screen</td></tr>
+                        <tr><td><kbd>s</kbd></td><td class="desc">Suspend</td></tr>
+                        <tr><td><kbd>e</kbd></td><td class="desc">Exit i3 (logout)</td></tr>
+                        <tr><td><kbd>r</kbd></td><td class="desc">Reboot</td></tr>
+                        <tr><td><kbd>Shift</kbd>+<kbd>s</kbd></td><td class="desc">Shutdown</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="apps">
+                <h2>Apps &amp; Screenshots</h2>
+
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>p</kbd></span></td>
+                            <td class="desc">Screenshot → <code>~/Pictures/Screenshots/</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Print</kbd></span></td>
+                            <td class="desc">Screenshot of focused window</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>Print</kbd></span></td>
+                            <td class="desc">Screenshot of selected region (drag)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>9</kbd></span></td>
+                            <td class="desc">Lock screen (black)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>c</kbd></span></td>
+                            <td class="desc">Reload i3 config (no restart)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd class="mod">Mod</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>r</kbd></span></td>
+                            <td class="desc">Restart i3 (preserves session)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="alacritty">
+                <h2>alacritty Terminal</h2>
+
+                <p class="sub-label">Tabs &amp; Windows</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>t</kbd></span></td>
+                            <td class="desc">New tab (opens in current directory)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>w</kbd></span></td>
+                            <td class="desc">Close tab</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>→</kbd></span></td>
+                            <td class="desc">Next tab</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>←</kbd></span></td>
+                            <td class="desc">Previous tab</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>l</kbd></span></td>
+                            <td class="desc">Next window (split)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>h</kbd></span></td>
+                            <td class="desc">Previous window (split)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Font size</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>=</kbd></span></td>
+                            <td class="desc">Increase font size</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>-</kbd></span></td>
+                            <td class="desc">Decrease font size</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>0</kbd></span></td>
+                            <td class="desc">Reset font size</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Clipboard</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>c</kbd></span></td>
+                            <td class="desc">Copy selection</td>
+                        </tr>
+                        <tr>
+                            <td><span class="keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>v</kbd></span></td>
+                            <td class="desc">Paste</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="ranger">
+                <h2>Ranger File Manager</h2>
+                <div class="callout callout-info">
+                    Launch with <kbd class="mod">Mod</kbd>+<kbd>v</kbd>. Ranger uses vim-style navigation.
+                </div>
+
+                <p class="sub-label">Navigation</p>
+                <table class="keytable">
+                    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>h</kbd> / <kbd>l</kbd></td><td class="desc">Go up / enter directory</td></tr>
+                        <tr><td><kbd>j</kbd> / <kbd>k</kbd></td><td class="desc">Move down / up</td></tr>
+                        <tr><td><kbd>gg</kbd> / <kbd>G</kbd></td><td class="desc">Go to top / bottom of list</td></tr>
+                        <tr><td><kbd>J</kbd> / <kbd>K</kbd></td><td class="desc">Half page down / up</td></tr>
+                        <tr><td><kbd>gh</kbd></td><td class="desc">Go to home (~)</td></tr>
+                        <tr><td><kbd>gr</kbd></td><td class="desc">Go to root (/)</td></tr>
+                        <tr><td><kbd>gd</kbd></td><td class="desc">Go to ~/Documents (custom)</td></tr>
+                        <tr><td><kbd>gw</kbd></td><td class="desc">Go to ~/Downloads (custom)</td></tr>
+                        <tr><td><kbd>gc</kbd></td><td class="desc">Go to ~/.config (custom)</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">File operations</p>
+                <table class="keytable">
+                    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>yy</kbd></td><td class="desc">Copy (yank) file</td></tr>
+                        <tr><td><kbd>dd</kbd></td><td class="desc">Cut file</td></tr>
+                        <tr><td><kbd>pp</kbd></td><td class="desc">Paste</td></tr>
+                        <tr><td><kbd>dD</kbd></td><td class="desc">Delete (with confirmation)</td></tr>
+                        <tr><td><kbd>cw</kbd></td><td class="desc">Rename file</td></tr>
+                        <tr><td><kbd>a</kbd></td><td class="desc">Rename (append to end)</td></tr>
+                        <tr><td><kbd>Space</kbd></td><td class="desc">Mark/select file</td></tr>
+                        <tr><td><kbd>v</kbd></td><td class="desc">Invert selection</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">View &amp; search</p>
+                <table class="keytable">
+                    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>zh</kbd></td><td class="desc">Toggle hidden files</td></tr>
+                        <tr><td><kbd>zi</kbd></td><td class="desc">Toggle image previews</td></tr>
+                        <tr><td><kbd>/</kbd></td><td class="desc">Search in current directory</td></tr>
+                        <tr><td><kbd>Ctrl</kbd>+<kbd>f</kbd></td><td class="desc">Fuzzy find (fzf)</td></tr>
+                        <tr><td><kbd>f</kbd></td><td class="desc">Filter files (type to filter)</td></tr>
+                        <tr><td><kbd>i</kbd></td><td class="desc">Display file info / preview</td></tr>
+                        <tr><td><kbd>co</kbd></td><td class="desc">Open current dir in VS Code (custom)</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Tabs</p>
+                <table class="keytable">
+                    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td><kbd>Ctrl</kbd>+<kbd>n</kbd></td><td class="desc">New tab</td></tr>
+                        <tr><td><kbd>Ctrl</kbd>+<kbd>w</kbd></td><td class="desc">Close tab</td></tr>
+                        <tr><td><kbd>Tab</kbd></td><td class="desc">Next tab</td></tr>
+                        <tr><td><kbd>Shift</kbd>+<kbd>Tab</kbd></td><td class="desc">Previous tab</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="bash">
+                <h2>Bash Aliases</h2>
+                <p class="note" style="margin-bottom:1rem">Defined in <code>~/.bashrc</code>. All your original aliases are carried over.</p>
+
+                <p class="sub-label">General</p>
+                <table class="keytable">
+                    <thead><tr><th>Alias</th><th>Expands to</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>c</code></td><td class="desc">clear</td></tr>
+                        <tr><td><code>ll</code></td><td class="desc">ls -alF (long list, all files)</td></tr>
+                        <tr><td><code>la</code></td><td class="desc">ls -A (all except . and ..)</td></tr>
+                        <tr><td><code>l</code></td><td class="desc">ls -CF</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Git shortcuts</p>
+                <table class="keytable">
+                    <thead><tr><th>Alias</th><th>Expands to</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>gs</code></td><td class="desc">git status</td></tr>
+                        <tr><td><code>gss</code></td><td class="desc">git status --short</td></tr>
+                        <tr><td><code>ga</code></td><td class="desc">git add</td></tr>
+                        <tr><td><code>gaa</code></td><td class="desc">git add .</td></tr>
+                        <tr><td><code>gc</code></td><td class="desc">git commit</td></tr>
+                        <tr><td><code>gcm</code></td><td class="desc">git commit --message</td></tr>
+                        <tr><td><code>gco</code></td><td class="desc">git checkout</td></tr>
+                        <tr><td><code>gcob</code></td><td class="desc">git checkout -b (new branch)</td></tr>
+                        <tr><td><code>gp</code></td><td class="desc">git push</td></tr>
+                        <tr><td><code>gpl</code></td><td class="desc">git pull</td></tr>
+                        <tr><td><code>gd</code></td><td class="desc">git diff</td></tr>
+                        <tr><td><code>glg</code></td><td class="desc">git log --graph --oneline --decorate --all</td></tr>
+                        <tr><td><code>gst</code></td><td class="desc">git stash</td></tr>
+                        <tr><td><code>gstp</code></td><td class="desc">git stash pop</td></tr>
+                        <tr><td><code>gb</code></td><td class="desc">git branch</td></tr>
+                        <tr><td><code>gr</code></td><td class="desc">git rebase</td></tr>
+                        <tr><td><code>glf "msg"</code></td><td class="desc">Search git log by commit message (function)</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="system">
+                <h2>System &amp; Pi-specific</h2>
+
+                <div class="two-col">
+                    <div class="card">
+                        <h3>Check CPU temp</h3>
+                        <pre>vcgencmd measure_temp
+# or watch it live:
+watch -n 1 vcgencmd measure_temp</pre>
+                    </div>
+                    <div class="card">
+                        <h3>Network interfaces</h3>
+                        <pre>ip link
+# To check your wifi/eth names
+# for polybar config</pre>
+                    </div>
+                    <div class="card">
+                        <h3>Audio control</h3>
+                        <pre>pavucontrol   # GUI mixer
+alsamixer     # TUI mixer
+amixer        # CLI control</pre>
+                    </div>
+                    <div class="card">
+                        <h3>Performance tips</h3>
+                        <p>If Pi feels slow, in <code>picom.conf</code> change:</p>
+                        <pre>backend = "xrender";
+# and comment out blur:</pre>
+                        <p style="margin-top:0.5rem">Also lower <code>gaps inner</code> in i3 config.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="setup">
+                <h2>Setup &amp; Config Locations</h2>
+
+                <div class="callout callout-tip">
+                    <strong>Quick install:</strong> Run <code>bash ~/rpi-setup/scripts/install.sh</code> from the package you downloaded.
+                </div>
+
+                <p class="sub-label">Config file locations</p>
+                <table class="keytable">
+                    <thead><tr><th>File</th><th>Location</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>i3</code></td><td class="desc"><code>~/.config/i3/config</code></td></tr>
+                        <tr><td><code>picom</code></td><td class="desc"><code>~/.config/picom/picom.conf</code></td></tr>
+                        <tr><td><code>polybar</code></td><td class="desc"><code>~/.config/polybar/config.ini</code></td></tr>
+                        <tr><td><code>alacritty</code></td><td class="desc"><code>~/.config/kitty/kitty.conf</code></td></tr>
+                        <tr><td><code>ranger</code></td><td class="desc"><code>~/.config/ranger/rc.conf</code></td></tr>
+                        <tr><td><code>flashfocus</code></td><td class="desc"><code>~/.config/flashfocus/flashfocus.yml</code></td></tr>
+                        <tr><td><code>bash</code></td><td class="desc"><code>~/.bashrc</code></td></tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">After changing i3 config</p>
+                <pre>Mod + Shift + c   # Reload config (no restart)
+Mod + Shift + r   # Full restart (if something breaks)</pre>
+
+                <p class="sub-label">After changing polybar config</p>
+                <pre>~/.config/polybar/launch.sh   # Re-run launch script</pre>
+
+                <p class="sub-label">Fix polybar network module</p>
+                <pre># Find your interface names:
+ip link
+
+# Edit polybar config:
+nano ~/.config/polybar/config.ini
+# Change [module/wlan] interface = wlan0
+# Change [module/eth]  interface = eth0</pre>
+
+                <p class="sub-label">Set a wallpaper</p>
+                <pre># Put your image at e.g. ~/Pictures/wallpaper.jpg
+nitrogen   # GUI picker — saves and auto-restores on login</pre>
+
+                <p class="sub-label">Wallpaper command-line</p>
+                <pre>feh --bg-scale ~/Pictures/wallpaper.jpg
+# Add to ~/.config/i3/config to make permanent:
+exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper.jpg</pre>
+            </section>
+
+            <!-- ════════════════════════════════════════════════════ -->
+            <section id="neovim">
+                <h2>Neovim (Coding Setup)</h2>
+
+                <div class="callout callout-info">
+                    Embedded Linux / firmware dev setup (C, Python, Rust) using Neovim + LSP + Mason.
+                </div>
+
+                <p class="sub-label">Core usage</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind / Command</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>vim file.c</kbd></td>
+                            <td class="desc">Open file in Neovim (use instead of vim)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>:q</kbd></td>
+                            <td class="desc">Quit Neovim</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>:w</kbd></td>
+                            <td class="desc">Save file</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>:Lazy</kbd></td>
+                            <td class="desc">Open plugin manager (lazy.nvim UI)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>:Mason</kbd></td>
+                            <td class="desc">Open LSP/tool installer UI</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>:MasonLog</kbd></td>
+                            <td class="desc">View Mason install logs (debug failures)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">LSP navigation (C / Python / Rust)</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>gd</kbd></td>
+                            <td class="desc">Go to definition</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>gr</kbd></td>
+                            <td class="desc">Find references</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>K</kbd></td>
+                            <td class="desc">Hover documentation</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>gf</kbd></td>
+                            <td class="desc">Format file (if configured)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>:LspInfo</kbd></td>
+                            <td class="desc">Check active language servers</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Insert mode improvements</p>
+                <table class="keytable">
+                    <thead><tr><th>Keybind</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>k</kbd><kbd>j</kbd></td>
+                            <td class="desc">Exit insert mode (escape alternative)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p class="sub-label">Tooling (Mason installs)</p>
+                <table class="keytable">
+                    <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><code>clangd</code></td>
+                            <td class="desc">C / C++ language server (firmware dev)</td>
+                        </tr>
+                        <tr>
+                            <td><code>pyright</code></td>
+                            <td class="desc">Python language server</td>
+                        </tr>
+                        <tr>
+                            <td><code>black</code></td>
+                            <td class="desc">Python formatter (via conform.nvim)</td>
+                        </tr>
+                        <tr>
+                            <td><code>clang-format</code></td>
+                            <td class="desc">C/C++ formatter</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="callout callout-warn">
+                    <strong>Note:</strong> If <code>mason</code> or <code>treesitter</code> fails, run <code>:MasonLog</code> and <code>:checkhealth</code>.
+                    On Raspberry Pi, some tools may fail due to architecture or missing binaries.
+                </div>
+
+                <p class="sub-label">Important setup notes (Pi / embedded Linux)</p>
+                <pre>
+# Install system deps (preferred over pip where possible)
+sudo apt install clangd python3 python3-pip
+
+# If pip blocks installs:
+python3 -m pip install --user black
+
+# Restart Neovim after installs:
+nvim
+                </pre>
+            </section>
+
+        </main>
+
+        <footer>
+            i3 Raspberry Pi setup · Dracula theme · kitty · polybar · ranger · Generated by Claude
+        </footer>
+
+    </body>
+</html>

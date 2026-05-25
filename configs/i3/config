@@ -1,0 +1,256 @@
+# i3 config file (v4)
+# Raspberry Pi OS — adapted from mrczlnks Manjaro setup
+# Mod key: Super (Win key)
+set $mod Mod4
+#
+## ── Defaults ────────────────────────────────────────────────
+default_border pixel 2
+default_floating_border pixel 2
+#
+## Font for window titles
+font xft:JetBrains Mono 10
+#
+## Use Mouse+$mod to drag floating windows
+floating_modifier $mod
+#
+## ── Gaps (i3-gaps) ───────────────────────────────────────────
+gaps inner 25
+gaps outer 5
+
+## ── Autostart ────────────────────────────────────────────────
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id flashfocus
+exec --no-startup-id nm-applet
+exec --no-startup-id xfce4-power-manager
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec --no-startup-id hsetroot -solid "#282a36"
+exec --no-startup-id xautolock -time 10 -locker i3lock -c 000000
+exec_always --no-startup-id feh --bg-fill ~/.config/wallpaper.jpg
+
+#
+# ── Applications ─────────────────────────────────────────────
+# Terminal
+bindsym $mod+Return exec alacritty 
+#
+## Browser
+bindsym $mod+b exec chromium-browser
+#
+## File manager (terminal-based)
+bindsym $mod+v exec alacritty -e ranger
+#
+## File manager (GUI)
+bindsym $mod+F3 exec thunar
+#
+## App launcher
+bindsym $mod+d exec --no-startup-id rofi -show drun
+#
+#
+## ── Screenshots ───────────────────────────────────────────────
+bindsym $mod+p exec scrot ~/Pictures/Screenshots/screenshot_%Y%m%d_%H%M%S.png
+bindsym $mod+Print exec scrot -u ~/Pictures/Screenshots/screenshot_%Y%m%d_%H%M%S.png
+bindsym $mod+Shift+Print exec scrot -s ~/Pictures/Screenshots/screenshot_%Y%m%d_%H%M%S.png
+#
+## ── System ────────────────────────────────────────────────────
+## Kill focused window
+bindsym $mod+q kill
+#
+## Reload config
+bindsym $mod+Shift+c reload
+#
+## Restart i3
+bindsym $mod+Shift+r restart
+#
+## Logout prompt
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -b 'Yes, exit' 'i3-msg exit'"
+#
+## Lock screen
+bindsym $mod+9 exec i3lock -c 000000
+#
+## System power menu
+bindsym $mod+0 mode "$mode_system"
+set $mode_system (l)ock  (e)xit  (s)uspend  (r)eboot  (S)hutdown
+mode "$mode_system" {
+    bindsym l exec i3lock -c 000000, mode "default"
+    bindsym s exec systemctl suspend, mode "default"
+    bindsym e exec i3-msg exit, mode "default"
+    bindsym r exec systemctl reboot, mode "default"
+    bindsym Shift+s exec systemctl poweroff, mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+## ── Focus & Movement ─────────────────────────────────────────
+## Vim-style focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+#
+## Arrow key focus
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+#
+## Vim-style move
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+#
+## Arrow key move
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+#
+## ── Layout ───────────────────────────────────────────────────
+bindsym $mod+t split toggle
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+#
+## Floating
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space       focus mode_toggle
+#
+## Sticky float (stays on all workspaces)
+bindsym $mod+Shift+s sticky toggle
+#
+## Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus       scratchpad show
+#
+## Focus parent
+bindsym $mod+a focus parent
+#
+## ── Border toggle ────────────────────────────────────────────
+bindsym $mod+u border none
+bindsym $mod+y border pixel 2
+bindsym $mod+n border normal
+#
+## ── Bar toggle ───────────────────────────────────────────────
+bindsym $mod+m bar mode toggle
+#
+## ── Workspaces ───────────────────────────────────────────────
+workspace_auto_back_and_forth yes
+#
+set $ws1 1
+set $ws2 2
+set $ws3 3
+set $ws4 4
+set $ws5 5
+set $ws6 6
+set $ws7 7
+set $ws8 8
+#
+## Switch to workspace
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+#
+## Move container to workspace (and follow)
+bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2; workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3; workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4; workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5; workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6; workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7; workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8; workspace $ws8
+#
+## Move container without following
+bindsym $mod+Ctrl+1 move container to workspace $ws1
+bindsym $mod+Ctrl+2 move container to workspace $ws2
+bindsym $mod+Ctrl+3 move container to workspace $ws3
+bindsym $mod+Ctrl+4 move container to workspace $ws4
+bindsym $mod+Ctrl+5 move container to workspace $ws5
+bindsym $mod+Ctrl+6 move container to workspace $ws6
+bindsym $mod+Ctrl+7 move container to workspace $ws7
+bindsym $mod+Ctrl+8 move container to workspace $ws8
+#
+## Navigate workspaces
+bindsym $mod+Ctrl+Right workspace next
+bindsym $mod+Ctrl+Left  workspace prev
+bindsym $mod+Shift+b    move container to workspace back_and_forth; workspace back_and_forth
+#
+## ── Resize Mode ──────────────────────────────────────────────
+bindsym $mod+r mode "resize"
+mode "resize" {
+    bindsym h resize shrink width  5 px or 5 ppt
+    bindsym j resize grow   height 5 px or 5 ppt
+    bindsym k resize shrink height 5 px or 5 ppt
+    bindsym l resize grow   width  5 px or 5 ppt
+
+    bindsym Left  resize shrink width  10 px or 10 ppt
+    bindsym Down  resize grow   height 10 px or 10 ppt
+    bindsym Up    resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow   width  10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+## ── Gap Mode ─────────────────────────────────────────────────
+set $mode_gaps Gaps: (o)uter  (i)nner
+set $mode_gaps_outer Outer Gaps: +|-|0  Shift for global
+set $mode_gaps_inner Inner Gaps: +|-|0  Shift for global
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+    bindsym o      mode "$mode_gaps_outer"
+    bindsym i      mode "$mode_gaps_inner"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+mode "$mode_gaps_inner" {
+    bindsym plus        gaps inner current plus 5
+    bindsym minus       gaps inner current minus 5
+    bindsym 0           gaps inner current set 0
+    bindsym Shift+plus  gaps inner all plus 5
+    bindsym Shift+minus gaps inner all minus 5
+    bindsym Shift+0     gaps inner all set 0
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+    bindsym plus        gaps outer current plus 5
+    bindsym minus       gaps outer current minus 5
+    bindsym 0           gaps outer current set 0
+    bindsym Shift+plus  gaps outer all plus 5
+    bindsym Shift+minus gaps outer all minus 5
+    bindsym Shift+0     gaps outer all set 0
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# ── Floating Windows ─────────────────────────────────────────
+for_window [class=".*"] border pixel 2
+for_window [title="alsamixer"]        floating enable, border pixel 1
+for_window [class="Galculator"]       floating enable, border pixel 1
+for_window [class="GParted"]          floating enable, border normal
+for_window [class="Lxappearance"]     floating enable, sticky enable, border normal
+for_window [class="Nitrogen"]         floating enable, sticky enable, border normal
+for_window [class="Pavucontrol"]      floating enable
+for_window [class="Skype"]            floating enable, border normal
+for_window [class="(?i)virtualbox"]   floating enable, border normal
+for_window [class="Xfburn"]           floating enable
+for_window [class="qt5ct"]            floating enable, sticky enable, border normal
+for_window [title="ranger"]           floating enable, border pixel 1
+for_window [urgent=latest]            focus
+
+# ── Colors ───────────────────────────────────────────────────
+# Dracula-inspired dark palette
+# class                   border   bg       text     indicator child_border
+client.focused            #6272a4  #6272a4  #f8f8f2  #ff79c6   #6272a4
+client.focused_inactive   #44475a  #44475a  #f8f8f2  #6272a4   #44475a
+client.unfocused          #282a36  #282a36  #bfbfbf  #44475a   #282a36
+client.urgent             #ff5555  #ff5555  #f8f8f2  #ff5555   #ff5555
+client.placeholder        #282a36  #282a36  #f8f8f2  #282a36   #282a36
+client.background         #282a36

@@ -1,0 +1,15 @@
+# flashfocus.yml — Raspberry Pi setup
+flash-opacity: 0.8
+default-opacity: 1.0
+time: 150
+simple: false
+ntimepoints: 8
+flash-on-focus: true
+flash-fullscreen: false
+flash-lone-windows: 'never'
+
+rules:
+  - window-class: firefox
+    flash-on-focus: false
+  - window-class: kitty
+    default-opacity: 1.0
