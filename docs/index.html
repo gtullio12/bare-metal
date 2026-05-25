@@ -156,11 +156,27 @@ nav {
 }
 .hardware-image:hover img { opacity: 1; }
 
+.hardware-tag {
+font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 1.25rem;
+}
+
+
 .hardware-info {
   padding: 3.5rem 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.hardware-info-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 1.25rem;
 }
 .section-tag {
   font-size: 0.7rem;
@@ -281,9 +297,8 @@ nav {
 .screenshot-img {
   width: 100%;
   display: block;
-  max-height: 520px;
-  object-fit: cover;
-  object-position: top;
+  max-height: none;
+  object-fit: contain;
 }
 
 /* ── Footer ── */
@@ -358,7 +373,7 @@ footer {
     <img src="../images/pironman.jpeg" alt="Pironman 5 with Raspberry Pi 5">
   </div>
   <div class="hardware-info">
-    <p class="section-tag">// Hardware</p>
+    <p style="color: var(--cyan);" class="hardware-info-header">// Hardware</p>
     <h2>The Machine</h2>
     <p>
       The Pironman 5 turns a Raspberry Pi 5 into a proper desktop workstation —
@@ -380,7 +395,7 @@ footer {
 <!-- ── Stack ── -->
 <section class="stack-section">
   <div class="stack-header">
-    <p class="section-tag">// Software Stack</p>
+    <p style="color: var(--cyan);" class="section-tag">// Software Stack</p>
     <h2>The Environment</h2>
     <p>Every tool chosen for a reason. Keyboard-driven, minimal, and fast.</p>
   </div>
