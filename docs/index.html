@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bare Metal</title>
+<title>gtullio12</title>
 <style>
 :root {
   --bg:       #282a36;
@@ -59,17 +59,9 @@ nav {
 
 /* ── Hero ── */
 .hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 540px;
+  padding: 5rem 2.5rem 4rem;
   border-bottom: 1px solid var(--surface);
-}
-.hero-text {
-  padding: 4.5rem 3rem 4.5rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 1px solid var(--surface);
+  max-width: 700px;
 }
 .hero-tag {
   font-size: 0.7rem;
@@ -79,227 +71,131 @@ nav {
   margin-bottom: 1.25rem;
 }
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 700;
   color: var(--fg);
   letter-spacing: -0.03em;
-  line-height: 1.0;
-  margin-bottom: 1.5rem;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
 }
 .hero-title span { color: var(--purple); }
 .hero-desc {
   color: var(--fg-muted);
   font-size: 0.88rem;
   line-height: 1.8;
-  max-width: 460px;
-  margin-bottom: 2.5rem;
-}
-.hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-.btn {
-  display: inline-block;
-  padding: 9px 22px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-family: inherit;
-  text-decoration: none;
-  transition: all 0.15s;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.btn-primary { background: var(--purple); color: var(--bg2); border: 1px solid var(--purple); }
-.btn-primary:hover { background: #caa8ff; border-color: #caa8ff; }
-.btn-secondary { background: transparent; color: var(--fg-muted); border: 1px solid var(--surface); }
-.btn-secondary:hover { border-color: var(--purple); color: var(--purple); }
-
-.hero-image {
-  position: relative;
-  overflow: hidden;
-  background: var(--bg3);
-}
-.hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  opacity: 0.82;
-  transition: opacity 0.3s;
-}
-.hero-image:hover img { opacity: 0.95; }
-.hero-image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(30,31,41,0.45) 0%, transparent 55%);
-  pointer-events: none;
+  max-width: 520px;
 }
 
-/* ── Hardware ── */
-.hardware {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid var(--surface);
-}
-.hardware-image {
-  background: var(--bg3);
-  overflow: hidden;
-  min-height: 460px;
-  border-right: 1px solid var(--surface);
-}
-.hardware-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  opacity: 0.88;
-  transition: opacity 0.3s;
-}
-.hardware-image:hover img { opacity: 1; }
-
-.hardware-tag {
-font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--cyan);
-  margin-bottom: 1.25rem;
-}
-
-
-.hardware-info {
+/* ── Projects ── */
+.projects-section {
   padding: 3.5rem 2.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
-.hardware-info-header {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--cyan);
-  margin-bottom: 1.25rem;
-}
-.section-tag {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--cyan);
-  margin-bottom: 0.75rem;
-}
-.hardware-info h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--fg);
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.02em;
-}
-.hardware-info > p {
-  color: var(--fg-muted);
-  font-size: 0.85rem;
+.projects-header {
   margin-bottom: 2rem;
-  line-height: 1.8;
-  max-width: 420px;
 }
-.spec-list { list-style: none; }
-.spec-list li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--surface);
-  font-size: 0.82rem;
-}
-.spec-list li:last-child { border-bottom: none; }
-.spec-key { color: var(--fg-muted); }
-.spec-val { color: var(--cyan); font-weight: 600; }
-
-/* ── Stack ── */
-.stack-section {
-  padding: 3.5rem 2.5rem;
-  border-bottom: 1px solid var(--surface);
-}
-.stack-header { margin-bottom: 2rem; }
-.stack-header h2 {
+.projects-header h2 {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--fg);
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
-.stack-header p {
-  color: var(--fg-muted);
-  font-size: 0.85rem;
-  max-width: 500px;
+.section-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 0.5rem;
 }
 
-.stack-grid {
+.project-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   background: var(--surface);
   border: 1px solid var(--surface);
   border-radius: 6px;
   overflow: hidden;
 }
-.stack-item {
+
+.project-card {
   background: var(--bg3);
-  padding: 1.5rem;
+  padding: 2.5rem;
+  text-decoration: none;
+  display: block;
   transition: background 0.15s;
+  position: relative;
 }
-.stack-item:hover { background: var(--bg); }
-.stack-item-header {
+.project-card:hover { background: var(--bg); }
+.project-card:hover .project-arrow { opacity: 1; transform: translateX(0); }
+
+.project-tag {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
+  gap: 0.5rem;
 }
-.stack-dot {
-  width: 7px;
-  height: 7px;
+.project-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.stack-name { font-size: 0.95rem; font-weight: 700; color: var(--fg); }
-.stack-desc { font-size: 0.8rem; color: var(--fg-muted); line-height: 1.6; padding-left: 19px; }
-
-/* ── Screenshot ── */
-.screenshot-section {
-  padding: 3.5rem 2.5rem;
-  border-bottom: 1px solid var(--surface);
-}
-.screenshot-header { margin-bottom: 1.5rem; }
-.screenshot-header h2 {
+.project-card h3 {
   font-size: 1.6rem;
   font-weight: 700;
   color: var(--fg);
-  margin-bottom: 0.4rem;
   letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
 }
-.screenshot-header p { color: var(--fg-muted); font-size: 0.85rem; }
-
-.screenshot-frame {
-  border: 1px solid var(--surface);
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--bg3);
+.project-card h3 span { display: block; }
+.project-desc {
+  color: var(--fg-muted);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  max-width: 380px;
 }
-.screenshot-bar {
-  background: var(--bg3);
-  border-bottom: 1px solid var(--surface);
-  padding: 8px 14px;
+.project-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+.tag {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.project-arrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.5;
+  transform: translateX(-4px);
+  transition: all 0.15s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.4rem;
 }
-.dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot-red    { background: var(--red); }
-.dot-yellow { background: var(--yellow); }
-.dot-green  { background: var(--green); }
-.screenshot-img {
-  width: 100%;
-  display: block;
-  max-height: none;
-  object-fit: contain;
-}
+
+/* project-specific accent colors */
+.card-bare .project-tag { color: var(--purple); }
+.card-bare h3 span.accent { color: var(--purple); }
+.card-bare .project-arrow { color: var(--purple); }
+.card-bare:hover { border-left: 2px solid var(--purple); margin-left: -2px; }
+
+.card-rc .project-tag { color: var(--green); }
+.card-rc h3 span.accent { color: var(--green); }
+.card-rc .project-arrow { color: var(--green); }
+.card-rc:hover { border-left: 2px solid var(--green); margin-left: -2px; }
 
 /* ── Footer ── */
 footer {
@@ -322,15 +218,11 @@ footer {
 }
 .footer-right a:hover { color: var(--purple); }
 
-/* ── Responsive ── */
 @media (max-width: 768px) {
-  .hero, .hardware { grid-template-columns: 1fr; }
-  .hero-image, .hardware-image { min-height: 260px; border-right: none; border-bottom: 1px solid var(--surface); }
-  .hero-text { padding: 2.5rem 1.5rem; border-right: none; border-bottom: 1px solid var(--surface); }
-  .hero-title { font-size: 2.4rem; }
-  .hardware-info { padding: 2rem 1.5rem; }
-  .stack-grid { grid-template-columns: 1fr; }
-  .stack-section, .screenshot-section { padding: 2rem 1.5rem; }
+  .project-grid { grid-template-columns: 1fr; }
+  .hero { padding: 3rem 1.5rem; }
+  .hero-title { font-size: 2.2rem; }
+  .projects-section { padding: 2rem 1.5rem; }
   nav { padding: 1rem 1.5rem; }
   footer { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
 }
@@ -339,134 +231,75 @@ footer {
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo">◆ Bare Metal</a>
+  <a href="index.html" class="nav-logo">◆ gtullio12</a>
   <div class="nav-links">
-    <a href="reference.html">Reference</a>
-    <a href="https://github.com/gtullio12/bare-metal" target="_blank">GitHub</a>
+    <a href="https://github.com/gtullio12" target="_blank">GitHub</a>
   </div>
 </nav>
 
-<!-- ── Hero ── -->
-<section class="hero">
-  <div class="hero-text">
-    <p class="hero-tag">// Raspberry Pi 5 · Dev Environment</p>
-    <h1 class="hero-title">Bare<br><span>Metal</span></h1>
-    <p class="hero-desc">
-      A purpose-built Unix environment for embedded systems, robotics, and C/C++ development.
-      Built on a Raspberry Pi 5 inside a Pironman 5 case with NVMe SSD —
-      running i3, neovim, and a fully keyboard-driven workflow.
-    </p>
-    <div class="hero-actions">
-      <a href="reference.html" class="btn btn-primary">View Reference</a>
-      <a href="https://github.com/gtullio12/bare-metal" target="_blank" class="btn btn-secondary">GitHub Repo</a>
-    </div>
-  </div>
-  <div class="hero-image">
-    <img src="./images/desktop_full.jpeg" alt="Bare Metal desktop setup">
-    <div class="hero-image-overlay"></div>
-  </div>
-</section>
+<div class="hero">
+  <p class="hero-tag">// Embedded Systems · Robotics · Linux</p>
+  <h1 class="hero-title">Building close<br>to the <span>metal.</span></h1>
+  <p class="hero-desc">
+    Projects in embedded systems, robotics, and low-level Linux development.
+    Keyboard-driven workflows, minimal tooling, hardware that does exactly what the code says.
+  </p>
+</div>
 
-<!-- ── Hardware ── -->
-<section class="hardware">
-  <div class="hardware-image">
-    <img src="./images/pironman.jpeg" alt="Pironman 5 with Raspberry Pi 5">
+<section class="projects-section">
+  <div class="projects-header">
+    <p class="section-tag">// Projects</p>
+    <h2>Work</h2>
   </div>
-  <div class="hardware-info">
-    <p style="color: var(--cyan);" class="hardware-info-header">// Hardware</p>
-    <h2>The Machine</h2>
-    <p>
-      The Pironman 5 turns a Raspberry Pi 5 into a proper desktop workstation —
-      acrylic tower case with RGB lighting, OLED status display, active cooling,
-      and PCIe NVMe support. Small enough to sit next to a keyboard, capable enough
-      to compile and run a full embedded dev environment.
-    </p>
-    <ul class="spec-list">
-      <li><span class="spec-key">SBC</span><span class="spec-val">Raspberry Pi 5</span></li>
-      <li><span class="spec-key">RAM</span><span class="spec-val">8 GB LPDDR4X</span></li>
-      <li><span class="spec-key">Storage</span><span class="spec-val">256 GB NVMe SSD (PCIe)</span></li>
-      <li><span class="spec-key">Case</span><span class="spec-val">Pironman 5</span></li>
-      <li><span class="spec-key">OS</span><span class="spec-val">Raspberry Pi OS Bookworm</span></li>
-      <li><span class="spec-key">Keyboard</span><span class="spec-val">System76 Launch (open source)</span></li>
-    </ul>
-  </div>
-</section>
+  <div class="project-grid">
 
-<!-- ── Stack ── -->
-<section class="stack-section">
-  <div class="stack-header">
-    <p style="color: var(--cyan);" class="section-tag">// Software Stack</p>
-    <h2>The Environment</h2>
-    <p>Every tool chosen for a reason. Keyboard-driven, minimal, and fast.</p>
-  </div>
-  <div class="stack-grid">
-    <div class="stack-item">
-      <div class="stack-item-header">
-        <div class="stack-dot" style="background:var(--purple)"></div>
-        <span class="stack-name">i3</span>
+    <a href="bare-metal.html" class="project-card card-bare">
+      <div class="project-tag">
+        <div class="project-dot" style="background:var(--purple)"></div>
+        Raspberry Pi 5 · Dev Environment
       </div>
-      <p class="stack-desc">Tiling window manager. Every window, workspace, and layout controlled from the keyboard. No mouse required.</p>
-    </div>
-    <div class="stack-item">
-      <div class="stack-item-header">
-        <div class="stack-dot" style="background:var(--cyan)"></div>
-        <span class="stack-name">Neovim</span>
+      <h3>Bare<br><span class="accent">Metal</span></h3>
+      <p class="project-desc">
+        A purpose-built Unix environment for embedded systems, robotics, and C/C++ development.
+        i3, Neovim, Alacritty — fully keyboard-driven, zero bloat.
+      </p>
+      <div class="project-stack">
+        <span class="tag" style="background:rgba(189,147,249,0.15);color:var(--purple)">i3wm</span>
+        <span class="tag" style="background:rgba(189,147,249,0.15);color:var(--purple)">Neovim</span>
+        <span class="tag" style="background:rgba(189,147,249,0.15);color:var(--purple)">Alacritty</span>
+        <span class="tag" style="background:rgba(189,147,249,0.15);color:var(--purple)">Polybar</span>
+        <span class="tag" style="background:rgba(189,147,249,0.15);color:var(--purple)">Dracula</span>
       </div>
-      <p class="stack-desc">Configured for C/C++, Python, and embedded development. LSP via clangd and pyright, plugin management via lazy.nvim.</p>
-    </div>
-    <div class="stack-item">
-      <div class="stack-item-header">
-        <div class="stack-dot" style="background:var(--green)"></div>
-        <span class="stack-name">Alacritty</span>
-      </div>
-      <p class="stack-desc">GPU-accelerated terminal emulator. Fast, minimal, zero bloat. Dracula theme with JetBrains Mono.</p>
-    </div>
-    <div class="stack-item">
-      <div class="stack-item-header">
-        <div class="stack-dot" style="background:var(--yellow)"></div>
-        <span class="stack-name">Polybar</span>
-      </div>
-      <p class="stack-desc">Lightweight status bar showing CPU load, RAM usage, temperature, network status, and time.</p>
-    </div>
-    <div class="stack-item">
-      <div class="stack-item-header">
-        <div class="stack-dot" style="background:var(--pink)"></div>
-        <span class="stack-name">Ranger</span>
-      </div>
-      <p class="stack-desc">Terminal file manager with vim keybindings and image preview. Faster than any GUI file manager for keyboard users.</p>
-    </div>
-    <div class="stack-item">
-      <div class="stack-item-header">
-        <div class="stack-dot" style="background:var(--orange)"></div>
-        <span class="stack-name">Dracula</span>
-      </div>
-      <p class="stack-desc">Consistent color scheme across the entire environment — terminal, editor, status bar, and window borders.</p>
-    </div>
-  </div>
-</section>
+      <div class="project-arrow">View Project →</div>
+    </a>
 
-<!-- ── Screenshot ── -->
-<section class="screenshot-section">
-  <div class="screenshot-header">
-    <p style="color: var(--cyan);" class="section-tag">// In Use</p>
-    <h2>The Workflow</h2>
-    <p>neovim, ranger, and htop tiled across workspaces.</p>
-  </div>
-  <div class="screenshot-frame">
-    <div class="screenshot-bar">
-      <div class="dot dot-red"></div>
-      <div class="dot dot-yellow"></div>
-      <div class="dot dot-green"></div>
-    </div>
-    <img class="screenshot-img" src="./images/workflow.png" alt="Bare Metal desktop in use">
+    <a href="rc-car.html" class="project-card card-rc">
+      <div class="project-tag">
+        <div class="project-dot" style="background:var(--green)"></div>
+        Raspberry Pi 3 · Firmware Rewrite
+      </div>
+      <h3>RC Car<br><span class="accent">Rewrite</span></h3>
+      <p class="project-desc">
+        Ground-up rewrite of the Freenove 4WD Smart Car firmware.
+        Real-time WASD control over WiFi, live camera stream, motor and servo control via I2C.
+      </p>
+      <div class="project-stack">
+        <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">Python</span>
+        <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">TCP Sockets</span>
+        <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">I2C</span>
+        <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">PCA9685</span>
+        <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">pygame</span>
+      </div>
+      <div class="project-arrow">View Project →</div>
+    </a>
+
   </div>
 </section>
 
 <footer>
-  <div class="footer-left">◆ <span>Bare Metal</span> — gtullio12</div>
+  <div class="footer-left">◆ <span>gtullio12</span></div>
   <div class="footer-right">
-    <a href="reference.html">Reference</a>
-    <a href="https://github.com/gtullio12/bare-metal" target="_blank">GitHub</a>
+    <a href="https://github.com/gtullio12" target="_blank">GitHub</a>
   </div>
 </footer>
 

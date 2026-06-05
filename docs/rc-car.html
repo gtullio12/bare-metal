@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RC Car Rewrite</title>
+<style>
+:root {
+  --bg:       #282a36;
+  --bg2:      #1e1f29;
+  --bg3:      #21222c;
+  --surface:  #44475a;
+  --fg:       #f8f8f2;
+  --fg-muted: #6272a4;
+  --purple:   #bd93f9;
+  --pink:     #ff79c6;
+  --cyan:     #8be9fd;
+  --green:    #50fa7b;
+  --yellow:   #f1fa8c;
+  --red:      #ff5555;
+  --orange:   #ffb86c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg2);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Nav ── */
+nav {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--surface);
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-logo {
+  color: var(--purple);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 1.5rem; }
+.nav-links a {
+  color: var(--fg-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--purple); }
+
+/* ── Hero ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 540px;
+  border-bottom: 1px solid var(--surface);
+}
+.hero-text {
+  padding: 4.5rem 3rem 4.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--surface);
+}
+.hero-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 1.25rem;
+}
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  margin-bottom: 1.5rem;
+}
+.hero-title span { color: var(--green); }
+.hero-desc {
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+  line-height: 1.8;
+  max-width: 460px;
+  margin-bottom: 2.5rem;
+}
+.hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.btn {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all 0.15s;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.btn-primary { background: var(--green); color: var(--bg2); border: 1px solid var(--green); }
+.btn-primary:hover { background: #6fffa0; border-color: #6fffa0; }
+.btn-secondary { background: transparent; color: var(--fg-muted); border: 1px solid var(--surface); }
+.btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+.hero-image {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Architecture diagram in hero */
+.arch-diagram {
+  padding: 2rem;
+  width: 100%;
+}
+.arch-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-muted);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.arch-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.arch-box {
+  background: var(--bg);
+  border: 1px solid var(--surface);
+  border-radius: 4px;
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  text-align: center;
+  min-width: 120px;
+}
+.arch-box .arch-label {
+  color: var(--fg-muted);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.2rem;
+}
+.arch-box .arch-val { color: var(--fg); font-weight: 600; }
+.arch-box.highlight { border-color: var(--green); }
+.arch-box.highlight .arch-val { color: var(--green); }
+.arch-arrow {
+  color: var(--fg-muted);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.arch-arrow .port {
+  font-size: 0.6rem;
+  color: var(--cyan);
+}
+.arch-divider {
+  border: none;
+  border-top: 1px solid var(--surface);
+  margin: 1rem 0;
+}
+.arch-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.arch-module {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+}
+.arch-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Hardware ── */
+.hardware {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--surface);
+}
+.hardware-info {
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--surface);
+}
+.hardware-info h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+.hardware-info > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+  max-width: 420px;
+}
+.section-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 1.25rem;
+}
+.spec-list { list-style: none; }
+.spec-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--surface);
+  font-size: 0.82rem;
+}
+.spec-list li:last-child { border-bottom: none; }
+.spec-key { color: var(--fg-muted); }
+.spec-val { color: var(--cyan); font-weight: 600; }
+
+/* Controls panel */
+.controls-panel {
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--bg3);
+}
+.controls-panel h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+.controls-panel > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+}
+.kbd-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.kbd-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(68,71,90,0.5);
+}
+.kbd-row:last-child { border-bottom: none; }
+kbd {
+  display: inline-block;
+  background: var(--bg);
+  border: 1px solid var(--surface);
+  border-bottom: 2px solid var(--surface);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  color: var(--yellow);
+  white-space: nowrap;
+  min-width: 28px;
+  text-align: center;
+}
+kbd.arrow { color: var(--cyan); }
+.kbd-desc { color: var(--fg-muted); font-size: 0.78rem; }
+
+/* ── Stack ── */
+.stack-section {
+  padding: 3.5rem 2.5rem;
+  border-bottom: 1px solid var(--surface);
+}
+.stack-header { margin-bottom: 2rem; }
+.stack-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.stack-header p { color: var(--fg-muted); font-size: 0.85rem; max-width: 500px; }
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--surface);
+  border: 1px solid var(--surface);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.stack-item {
+  background: var(--bg3);
+  padding: 1.5rem;
+  transition: background 0.15s;
+}
+.stack-item:hover { background: var(--bg); }
+.stack-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.stack-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.stack-name { font-size: 0.95rem; font-weight: 700; color: var(--fg); }
+.stack-desc { font-size: 0.8rem; color: var(--fg-muted); line-height: 1.6; padding-left: 19px; }
+
+/* ── How it works ── */
+.how-section {
+  padding: 3.5rem 2.5rem;
+  border-bottom: 1px solid var(--surface);
+}
+.how-section h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.how-section > .section-tag { margin-bottom: 0.5rem; }
+.how-section > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--surface);
+  border: 1px solid var(--surface);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.how-item {
+  background: var(--bg3);
+  padding: 1.75rem;
+  transition: background 0.15s;
+}
+.how-item:hover { background: var(--bg); }
+.how-item h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.how-item h3 span {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tag-motor  { background: rgba(80,250,123,0.15); color: var(--green); }
+.tag-servo  { background: rgba(139,233,253,0.15); color: var(--cyan); }
+.tag-camera { background: rgba(255,121,198,0.15); color: var(--pink); }
+.tag-socket { background: rgba(189,147,249,0.15); color: var(--purple); }
+.how-item p { font-size: 0.8rem; color: var(--fg-muted); line-height: 1.7; }
+code { color: var(--green); font-family: inherit; font-size: 0.85em; }
+
+/* ── Learned ── */
+.learned-section {
+  padding: 3.5rem 2.5rem;
+  border-bottom: 1px solid var(--surface);
+}
+.learned-section h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.learned-section > .section-tag { margin-bottom: 0.5rem; }
+.learned-section > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+.learned-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+.learned-list li {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--surface);
+  font-size: 0.82rem;
+}
+.learned-list li:last-child { border-bottom: none; }
+.learned-num {
+  color: var(--purple);
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+.learned-content h4 {
+  color: var(--fg);
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  font-size: 0.85rem;
+}
+.learned-content p { color: var(--fg-muted); line-height: 1.7; }
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--surface);
+  padding: 1.75rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-left { color: var(--fg-muted); font-size: 0.78rem; }
+.footer-left span { color: var(--green); }
+.footer-right { display: flex; gap: 1.5rem; }
+.footer-right a {
+  color: var(--fg-muted);
+  text-decoration: none;
+  font-size: 0.78rem;
+  transition: color 0.15s;
+}
+.footer-right a:hover { color: var(--green); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero, .hardware { grid-template-columns: 1fr; }
+  .hero-text { padding: 2.5rem 1.5rem; border-right: none; border-bottom: 1px solid var(--surface); }
+  .hero-title { font-size: 2.4rem; }
+  .hardware-info, .controls-panel { padding: 2rem 1.5rem; border-right: none; border-bottom: 1px solid var(--surface); }
+  .stack-grid, .how-grid { grid-template-columns: 1fr; }
+  .stack-section, .how-section, .learned-section { padding: 2rem 1.5rem; }
+  nav { padding: 1rem 1.5rem; }
+  footer { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">◆ gtullio12</a>
+  <div class="nav-links">
+    <a href="index.html">Projects</a>
+    <a href="https://github.com/gtullio12/Freenove_4WD_Smart_Car_Raspberry_Pi_Rewrite" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-tag">// Raspberry Pi 3 · Firmware Rewrite · Python</p>
+    <h1 class="hero-title">RC Car<br><span>Rewrite</span></h1>
+    <p class="hero-desc">
+      Ground-up rewrite of the Freenove 4WD Smart Car firmware.
+      Custom TCP client/server, real-time WASD control over WiFi,
+      live camera streaming, motor and servo control — no frameworks, minimal dependencies.
+    </p>
+    <div class="hero-actions">
+      <a href="https://github.com/gtullio12/Freenove_4WD_Smart_Car_Raspberry_Pi_Rewrite" target="_blank" class="btn btn-primary">GitHub Repo</a>
+      <a href="index.html" class="btn btn-secondary">← All Projects</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="arch-diagram">
+      <p style="color: var(--cyan);"  class="arch-title">// System Architecture</p>
+      <div class="arch-row">
+        <div class="arch-box highlight">
+          <div class="arch-label">Laptop</div>
+          <div class="arch-val">client.py</div>
+        </div>
+        <div class="arch-arrow">
+          <span>──5000──▶</span>
+          <span class="port">commands</span>
+          <span>◀──5001──</span>
+          <span class="port">camera</span>
+        </div>
+        <div class="arch-box highlight">
+          <div class="arch-label">Raspberry Pi 3</div>
+          <div class="arch-val">server.py</div>
+        </div>
+      </div>
+      <hr class="arch-divider">
+      <div class="arch-row" style="align-items:flex-start; gap: 2rem;">
+        <div class="arch-stack">
+          <div class="arch-module"><div class="arch-dot" style="background:var(--green)"></div>pygame input</div>
+          <div class="arch-module"><div class="arch-dot" style="background:var(--cyan)"></div>TCP socket</div>
+          <div class="arch-module"><div class="arch-dot" style="background:var(--purple)"></div>TCP_NODELAY</div>
+          <div class="arch-module"><div class="arch-dot" style="background:var(--pink)"></div>camera thread</div>
+        </div>
+        <div style="color: var(--surface); font-size: 1.5rem; margin-top: 0.5rem;">│</div>
+        <div class="arch-stack">
+          <div class="arch-module"><div class="arch-dot" style="background:var(--green)"></div>motor.py</div>
+          <div class="arch-module"><div class="arch-dot" style="background:var(--cyan)"></div>servo.py</div>
+          <div class="arch-module"><div class="arch-dot" style="background:var(--purple)"></div>pca9685.py (I2C)</div>
+          <div class="arch-module"><div class="arch-dot" style="background:var(--pink)"></div>camera.py</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Hardware + Controls ── -->
+<section class="hardware">
+  <div class="hardware-info">
+    <p style="color: var(--cyan);"  class="section-tag">// Hardware</p>
+    <h2>The Car</h2>
+    <p>
+      Freenove 4WD Smart Car chassis running a Raspberry Pi 3.
+      The PCA9685 PWM driver sits between the Pi and all actuators,
+      communicating over I2C and outputting independent PWM signals
+      on 16 channels.
+    </p>
+    <ul class="spec-list">
+      <li><span class="spec-key">SBC</span><span class="spec-val">Raspberry Pi 3</span></li>
+      <li><span class="spec-key">PWM Driver</span><span class="spec-val">PCA9685 (I2C 0x40)</span></li>
+      <li><span class="spec-key">Motors</span><span class="spec-val">4x DC · channels 0–7</span></li>
+      <li><span class="spec-key">Servos</span><span class="spec-val">2x SG90 · ch 8 (pan) ch 9 (tilt)</span></li>
+      <li><span class="spec-key">Camera</span><span class="spec-val">Pi Camera Module (CSI)</span></li>
+      <li><span class="spec-key">OS</span><span class="spec-val">Raspberry Pi OS Bookworm</span></li>
+    </ul>
+  </div>
+  <div class="controls-panel">
+    <p style="color: var(--cyan);" class="section-tag">// Controls</p>
+    <h2>Keybindings</h2>
+    <p>WASD drives the motors. Arrow keys pan and tilt the camera.</p>
+    <div class="kbd-grid">
+      <div class="kbd-row"><kbd>W</kbd><span class="kbd-desc">Move forward</span></div>
+      <div class="kbd-row"><kbd>S</kbd><span class="kbd-desc">Reverse</span></div>
+      <div class="kbd-row"><kbd>A</kbd><span class="kbd-desc">Rotate left</span></div>
+      <div class="kbd-row"><kbd>D</kbd><span class="kbd-desc">Rotate right</span></div>
+      <div class="kbd-row"><kbd>W</kbd>+<kbd>D</kbd><span class="kbd-desc">Forward right curve</span></div>
+      <div class="kbd-row"><kbd>W</kbd>+<kbd>A</kbd><span class="kbd-desc">Forward left curve</span></div>
+      <div class="kbd-row"><kbd>S</kbd>+<kbd>D</kbd><span class="kbd-desc">Reverse right curve</span></div>
+      <div class="kbd-row"><kbd>S</kbd>+<kbd>A</kbd><span class="kbd-desc">Reverse left curve</span></div>
+      <div class="kbd-row"><kbd class="arrow">↑</kbd><span class="kbd-desc">Tilt camera up</span></div>
+      <div class="kbd-row"><kbd class="arrow">↓</kbd><span class="kbd-desc">Tilt camera down</span></div>
+      <div class="kbd-row"><kbd class="arrow">←</kbd><span class="kbd-desc">Pan camera left</span></div>
+      <div class="kbd-row"><kbd class="arrow">→</kbd><span class="kbd-desc">Pan camera right</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stack ── -->
+<section class="stack-section">
+  <div class="stack-header">
+    <p style="color: var(--cyan);"  class="section-tag">// Software Stack</p>
+    <h2>Implementation</h2>
+    <p>Server side runs on the Pi with zero pip installs. Client runs on the laptop with pygame for input.</p>
+  </div>
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--green)"></div>
+        <span class="stack-name">TCP Sockets</span>
+      </div>
+      <p class="stack-desc">Two parallel sockets — port 5000 for commands, port 5001 for the camera stream. Raw Python stdlib, no frameworks.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--cyan)"></div>
+        <span class="stack-name">PCA9685</span>
+      </div>
+      <p class="stack-desc">I2C PWM driver chip. 16 independent channels. Motors use two channels each — one forward, one backward — with 12-bit duty cycles.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--purple)"></div>
+        <span class="stack-name">pygame</span>
+      </div>
+      <p class="stack-desc">Client-side input via <code>key.get_pressed()</code> — polls all keys simultaneously every loop iteration. No OS repeat delay.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--pink)"></div>
+        <span class="stack-name">picamera2</span>
+      </div>
+      <p class="stack-desc">Captures raw RGB888 frames at 640×480. Streamed over TCP with a 4-byte size header so the client knows exactly how many bytes to read.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--yellow)"></div>
+        <span class="stack-name">threading</span>
+      </div>
+      <p class="stack-desc">Commands and camera streaming run in separate threads on both sides. Prevents either socket from blocking the other.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--orange)"></div>
+        <span class="stack-name">SSHFS</span>
+      </div>
+      <p class="stack-desc">Pi filesystem mounted on the bare-metal workstation. Edit in Neovim locally, files live and execute on the car. No sync step.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ── -->
+<section class="how-section">
+  <p style="color: var(--cyan);" class="section-tag">// How It Works</p>
+  <h2>Under the Hood</h2>
+  <p>Each subsystem is isolated into its own module. The server dispatches commands to the right module based on the string received.</p>
+  <div class="how-grid">
+    <div class="how-item">
+      <h3>Motors <span class="tag-motor">motor.py</span></h3>
+      <p>Each motor uses two PCA9685 channels — one forward, one backward. Duty cycles run 0–4095 (12-bit). Setting both channels to 4095 simultaneously triggers an active brake. Turning is skid-steer — one side drives, the other stops — the same mechanism used in tanks.</p>
+    </div>
+    <div class="how-item">
+      <h3>Servos <span class="tag-servo">servo.py</span></h3>
+      <p>Driven at 50Hz via PCA9685. Pulse width maps to angle — 500μs to 2500μs covers 0–180°. Pan and tilt are incremental — each keypress adjusts the stored pulse by a fixed offset, so the camera holds position when the key is released.</p>
+    </div>
+    <div class="how-item">
+      <h3>Camera <span class="tag-camera">camera.py</span></h3>
+      <p>Pi captures RGB888 frames via <code>picamera2</code>. Each frame is prefixed with a 4-byte big-endian size header before sending. Client reads the size first, then reads exactly that many bytes — reassembles the numpy array and blits it to the pygame surface.</p>
+    </div>
+    <div class="how-item">
+      <h3>Commands <span class="tag-socket">server.py</span></h3>
+      <p>Commands are plain UTF-8 strings — <code>move_forward</code>, <code>tilt_up</code>, <code>stop</code> etc. <code>TCP_NODELAY</code> is set on both sockets to disable Nagle's algorithm, ensuring each 12-byte command is sent immediately without buffering.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── What I Learned ── -->
+<section class="learned-section">
+  <p style="color: var(--cyan);"  class="section-tag">// Reflection</p>
+  <h2>What I Learned</h2>
+  <p>Things that weren't obvious until I built it.</p>
+  <ul class="learned-list">
+    <li>
+      <span class="learned-num">01</span>
+      <div class="learned-content">
+        <h4>TCP isn't built for real-time control</h4>
+        <p>Nagle's algorithm buffers small packets to improve throughput — great for file transfers, terrible for a 12-byte keypress command every 30ms. Disabling it with <code>TCP_NODELAY</code> was the difference between laggy and responsive.</p>
+      </div>
+    </li>
+    <li>
+      <span class="learned-num">02</span>
+      <div class="learned-content">
+        <h4>Terminals aren't built for game input</h4>
+        <p>Python's curses library relies on OS key repeat — there's a built-in delay before a held key starts repeating. For motor control this caused a stutter on first press. pygame's <code>key.get_pressed()</code> polls every key simultaneously on every frame, eliminating it entirely.</p>
+      </div>
+    </li>
+    <li>
+      <span class="learned-num">03</span>
+      <div class="learned-content">
+        <h4>Each motor needs two PWM channels</h4>
+        <p>The motor driver uses one channel for forward and one for backward. Setting both to full duty simultaneously creates an active brake rather than a coast-to-stop. Understanding this was key to getting clean directional control.</p>
+      </div>
+    </li>
+    <li>
+      <span class="learned-num">04</span>
+      <div class="learned-content">
+        <h4>Hardware drivers don't need rewriting</h4>
+        <p>The PCA9685 driver is dictated entirely by the chip's datasheet — register addresses, I2C protocol, bit manipulation. Reading and understanding it was more valuable than rewriting it from scratch.</p>
+      </div>
+    </li>
+    <li>
+      <span class="learned-num">05</span>
+      <div class="learned-content">
+        <h4>Threading is necessary for simultaneous I/O</h4>
+        <p>Camera streaming and command handling need to run concurrently. A single-threaded server would block on <code>recv()</code> while the camera starved. Two threads, two sockets, clean separation.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<footer>
+  <div class="footer-left">◆ <span>RC Car Rewrite</span> — gtullio12</div>
+  <div class="footer-right">
+    <a href="index.html">Projects</a>
+    <a href="https://github.com/gtullio12/Freenove_4WD_Smart_Car_Raspberry_Pi_Rewrite" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
