@@ -197,6 +197,11 @@ nav {
 .card-rc .project-arrow { color: var(--green); }
 .card-rc:hover { border-left: 2px solid var(--green); margin-left: -2px; }
 
+.card-sentiment .project-tag { color: var(--orange); }
+.card-sentiment h3 span.accent { color: var(--orange); }
+.card-sentiment .project-arrow { color: var(--orange); }
+.card-sentiment:hover { border-left: 2px solid var(--orange); margin-left: -2px; }
+
 /* ── Footer ── */
 footer {
   border-top: 1px solid var(--surface);
@@ -289,6 +294,26 @@ footer {
         <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">I2C</span>
         <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">PCA9685</span>
         <span class="tag" style="background:rgba(80,250,123,0.15);color:var(--green)">pygame</span>
+      </div>
+      <div class="project-arrow">View Project →</div>
+    </a>
+
+    <a href="sentiment.html" class="project-card card-sentiment">
+      <div class="project-tag">
+        <div class="project-dot" style="background:var(--orange)"></div>
+        Python · Deep Learning · NLP
+      </div>
+      <h3>Crypto<br><span class="accent">Sentiment</span></h3>
+      <p class="project-desc">
+        Deep learning models that predict cryptocurrency market sentiment from Twitter.
+        CNN and MLP trained on 20,000 labeled tweets — 95% test accuracy.
+      </p>
+      <div class="project-stack">
+        <span class="tag" style="background:rgba(255,184,108,0.15);color:var(--orange)">Keras</span>
+        <span class="tag" style="background:rgba(255,184,108,0.15);color:var(--orange)">CNN</span>
+        <span class="tag" style="background:rgba(255,184,108,0.15);color:var(--orange)">MLP</span>
+        <span class="tag" style="background:rgba(255,184,108,0.15);color:var(--orange)">VADER</span>
+        <span class="tag" style="background:rgba(255,184,108,0.15);color:var(--orange)">Tweepy</span>
       </div>
       <div class="project-arrow">View Project →</div>
     </a>

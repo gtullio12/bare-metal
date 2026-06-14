@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Sentiment Analysis</title>
+<style>
+:root {
+  --bg:       #282a36;
+  --bg2:      #1e1f29;
+  --bg3:      #21222c;
+  --surface:  #44475a;
+  --fg:       #f8f8f2;
+  --fg-muted: #6272a4;
+  --purple:   #bd93f9;
+  --pink:     #ff79c6;
+  --cyan:     #8be9fd;
+  --green:    #50fa7b;
+  --yellow:   #f1fa8c;
+  --red:      #ff5555;
+  --orange:   #ffb86c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg2);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Nav ── */
+nav {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--surface);
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-logo {
+  color: var(--purple);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 1.5rem; }
+.nav-links a {
+  color: var(--fg-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--purple); }
+
+/* ── Hero ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 540px;
+  border-bottom: 1px solid var(--surface);
+}
+.hero-text {
+  padding: 4.5rem 3rem 4.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--surface);
+}
+.hero-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 1.25rem;
+}
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  margin-bottom: 1.5rem;
+}
+.hero-title span { color: var(--orange); }
+.hero-desc {
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+  line-height: 1.8;
+  max-width: 460px;
+  margin-bottom: 2.5rem;
+}
+.hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.btn {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all 0.15s;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.btn-primary { background: var(--orange); color: var(--bg2); border: 1px solid var(--orange); }
+.btn-primary:hover { background: #ffc97a; border-color: #ffc97a; }
+.btn-secondary { background: transparent; color: var(--fg-muted); border: 1px solid var(--surface); }
+.btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ── Model diagram in hero ── */
+.hero-image {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.arch-diagram {
+  padding: 2rem;
+  width: 100%;
+}
+.arch-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-muted);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: center;
+}
+.pipe-node {
+  background: var(--bg);
+  border: 1px solid var(--surface);
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.75rem;
+  text-align: center;
+  min-width: 180px;
+}
+.pipe-node .arch-label {
+  color: var(--fg-muted);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.15rem;
+}
+.pipe-node .arch-val { color: var(--fg); font-weight: 600; }
+.pipe-node.hi-orange { border-color: var(--orange); }
+.pipe-node.hi-orange .arch-val { color: var(--orange); }
+.pipe-node.hi-cyan { border-color: var(--cyan); }
+.pipe-node.hi-cyan .arch-val { color: var(--cyan); }
+.pipe-node.hi-pink { border-color: var(--pink); }
+.pipe-node.hi-pink .arch-val { color: var(--pink); }
+.pipe-arrow {
+  color: var(--surface);
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+}
+.pipe-split {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 0;
+}
+.pipe-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.pipe-label {
+  font-size: 0.6rem;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.25rem;
+}
+.arch-divider {
+  border: none;
+  border-top: 1px solid var(--surface);
+  margin: 1rem 0;
+  width: 100%;
+}
+
+/* ── Results ── */
+.results-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--surface);
+}
+.results-info {
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--surface);
+}
+.results-info h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+.results-info > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+  max-width: 420px;
+}
+.section-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--cyan);
+  margin-bottom: 1.25rem;
+}
+.spec-list { list-style: none; }
+.spec-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--surface);
+  font-size: 0.82rem;
+}
+.spec-list li:last-child { border-bottom: none; }
+.spec-key { color: var(--fg-muted); }
+.spec-val { color: var(--orange); font-weight: 600; }
+.spec-val.good { color: var(--green); }
+
+/* ── Sentiment examples panel ── */
+.sentiment-panel {
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--bg3);
+}
+.sentiment-panel h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+.sentiment-panel > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  line-height: 1.8;
+}
+.tweet-example {
+  background: var(--bg);
+  border: 1px solid var(--surface);
+  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+}
+.tweet-example:last-child { margin-bottom: 0; }
+.tweet-text {
+  color: var(--fg);
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+.tweet-result {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.result-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.positive { color: var(--green); }
+.positive .result-dot { background: var(--green); }
+.negative { color: var(--red); }
+.negative .result-dot { background: var(--red); }
+
+/* ── Stack ── */
+.stack-section {
+  padding: 3.5rem 2.5rem;
+  border-bottom: 1px solid var(--surface);
+}
+.stack-header { margin-bottom: 2rem; }
+.stack-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.stack-header p { color: var(--fg-muted); font-size: 0.85rem; max-width: 500px; }
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--surface);
+  border: 1px solid var(--surface);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.stack-item {
+  background: var(--bg3);
+  padding: 1.5rem;
+  transition: background 0.15s;
+}
+.stack-item:hover { background: var(--bg); }
+.stack-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.stack-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.stack-name { font-size: 0.95rem; font-weight: 700; color: var(--fg); }
+.stack-desc { font-size: 0.8rem; color: var(--fg-muted); line-height: 1.6; padding-left: 19px; }
+
+/* ── How it works ── */
+.how-section {
+  padding: 3.5rem 2.5rem;
+  border-bottom: 1px solid var(--surface);
+}
+.how-section h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.how-section > .section-tag { margin-bottom: 0.5rem; }
+.how-section > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--surface);
+  border: 1px solid var(--surface);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.how-item {
+  background: var(--bg3);
+  padding: 1.75rem;
+  transition: background 0.15s;
+}
+.how-item:hover { background: var(--bg); }
+.how-item h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.how-item h3 span {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tag-data    { background: rgba(139,233,253,0.15); color: var(--cyan); }
+.tag-model   { background: rgba(255,184,108,0.15); color: var(--orange); }
+.tag-vader   { background: rgba(189,147,249,0.15); color: var(--purple); }
+.tag-eval    { background: rgba(80,250,123,0.15); color: var(--green); }
+.how-item p { font-size: 0.8rem; color: var(--fg-muted); line-height: 1.7; }
+code { color: var(--orange); font-family: inherit; font-size: 0.85em; }
+
+/* ── Learned ── */
+.learned-section {
+  padding: 3.5rem 2.5rem;
+  border-bottom: 1px solid var(--surface);
+}
+.learned-section h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.learned-section > .section-tag { margin-bottom: 0.5rem; }
+.learned-section > p {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+.learned-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+.learned-list li {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--surface);
+  font-size: 0.82rem;
+}
+.learned-list li:last-child { border-bottom: none; }
+.learned-num {
+  color: var(--orange);
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 1.5rem;
+}
+.learned-content h4 {
+  color: var(--fg);
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  font-size: 0.85rem;
+}
+.learned-content p { color: var(--fg-muted); line-height: 1.7; }
+
+/* ── Footer ── */
+footer {
+  border-top: 1px solid var(--surface);
+  padding: 1.75rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-left { color: var(--fg-muted); font-size: 0.78rem; }
+.footer-left span { color: var(--orange); }
+.footer-right { display: flex; gap: 1.5rem; }
+.footer-right a {
+  color: var(--fg-muted);
+  text-decoration: none;
+  font-size: 0.78rem;
+  transition: color 0.15s;
+}
+.footer-right a:hover { color: var(--orange); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hero, .results-section { grid-template-columns: 1fr; }
+  .hero-text { padding: 2.5rem 1.5rem; border-right: none; border-bottom: 1px solid var(--surface); }
+  .hero-title { font-size: 2.4rem; }
+  .results-info, .sentiment-panel { padding: 2rem 1.5rem; border-right: none; border-bottom: 1px solid var(--surface); }
+  .stack-grid, .how-grid { grid-template-columns: 1fr; }
+  .stack-section, .how-section, .learned-section { padding: 2rem 1.5rem; }
+  nav { padding: 1rem 1.5rem; }
+  footer { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">◆ gtullio12</a>
+  <div class="nav-links">
+    <a href="index.html">Projects</a>
+    <a href="https://github.com/gtullio12/Sentiment-Analysis-with-CNN" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-tag">// Python · Deep Learning · NLP</p>
+    <h1 class="hero-title">Crypto<br><span>Sentiment</span></h1>
+    <p class="hero-desc">
+      Deep learning models that predict cryptocurrency market sentiment from Twitter.
+      20,000 tweets, two model architectures — CNN and MLP — trained and evaluated
+      with no pretrained weights.
+    </p>
+    <div class="hero-actions">
+      <a href="https://github.com/gtullio12/Sentiment-Analysis-with-CNN" target="_blank" class="btn btn-primary">GitHub Repo</a>
+      <a href="index.html" class="btn btn-secondary">← All Projects</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="arch-diagram">
+      <p style="color: var(--cyan);" class="arch-title">// Data Pipeline</p>
+      <div class="pipeline">
+        <div class="pipe-node hi-cyan">
+          <div class="arch-label">Twitter API · Tweepy</div>
+          <div class="arch-val">20,000 tweets</div>
+        </div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-node">
+          <div class="arch-label">Preprocessing</div>
+          <div class="arch-val">clean · tokenize · filter</div>
+        </div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-node hi-orange">
+          <div class="arch-label">VADER</div>
+          <div class="arch-val">auto-label sentiment</div>
+        </div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-node">
+          <div class="arch-label">Split</div>
+          <div class="arch-val">19,900 train · 100 test</div>
+        </div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-split">
+          <div class="pipe-branch">
+            <div class="pipe-label">Model A</div>
+            <div class="pipe-node hi-orange">
+              <div class="arch-label">MLP</div>
+              <div class="arch-val">Bag-of-Words</div>
+            </div>
+          </div>
+          <div class="pipe-branch">
+            <div class="pipe-label">Model B</div>
+            <div class="pipe-node hi-pink">
+              <div class="arch-label">CNN</div>
+              <div class="arch-val">Embedding + Conv1D</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Results + Examples ── -->
+<section class="results-section">
+  <div class="results-info">
+    <p style="color: var(--cyan);" class="section-tag">// Results</p>
+    <h2>Accuracy</h2>
+    <p>
+      Both models were evaluated on a held-out test set of 100 tweets.
+      The MLP outperformed the CNN, likely due to the bag-of-words representation
+      being a better fit for short, noisy tweet text.
+    </p>
+    <ul class="spec-list">
+      <li><span class="spec-key">MLP · Train Accuracy</span><span class="spec-val good">98.81%</span></li>
+      <li><span class="spec-key">MLP · Test Accuracy</span><span class="spec-val good">95.00%</span></li>
+      <li><span class="spec-key">CNN · Train Accuracy</span><span class="spec-val">90.74%</span></li>
+      <li><span class="spec-key">CNN · Test Accuracy</span><span class="spec-val">90.00%</span></li>
+      <li><span class="spec-key">Training Tweets</span><span class="spec-val">19,900</span></li>
+      <li><span class="spec-key">Test Tweets</span><span class="spec-val">100</span></li>
+      <li><span class="spec-key">Collection Time</span><span class="spec-val">~2 hours</span></li>
+    </ul>
+  </div>
+  <div class="sentiment-panel">
+    <p style="color: var(--cyan);" class="section-tag">// Live Predictions</p>
+    <h2>Example Tweets</h2>
+    <p>Manual tests used during evaluation — both models predicted correctly.</p>
+    <div class="tweet-example">
+      <div class="tweet-text">"crypto will definitley go up. It has a bright future! #bitcoin"</div>
+      <div class="tweet-result positive"><div class="result-dot"></div>POSITIVE · both models</div>
+    </div>
+    <div class="tweet-example">
+      <div class="tweet-text">"crypto will die soon!!! Please dont buy"</div>
+      <div class="tweet-result negative"><div class="result-dot"></div>NEGATIVE · both models</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stack ── -->
+<section class="stack-section">
+  <div class="stack-header">
+    <p style="color: var(--cyan);" class="section-tag">// Software Stack</p>
+    <h2>Implementation</h2>
+    <p>Built with Keras on TensorFlow. Data collected via Tweepy. Sentiment labels generated automatically using VADER.</p>
+  </div>
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--cyan)"></div>
+        <span class="stack-name">Tweepy</span>
+      </div>
+      <p class="stack-desc">Twitter API client. Searched for crypto-opinion keywords — "crypto will", "crypto can", "crypto is" — filtering out retweets and links to target opinionated text.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--purple)"></div>
+        <span class="stack-name">VADER</span>
+      </div>
+      <p class="stack-desc">Rule-based sentiment analyzer from NLTK. Used to auto-classify 20,000 tweets as positive or negative, producing training labels without manual annotation.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--orange)"></div>
+        <span class="stack-name">Keras / TensorFlow</span>
+      </div>
+      <p class="stack-desc">Both models built with Keras Sequential API. CNN uses <code>Embedding → Conv1D → MaxPooling → Dense</code>. MLP uses bag-of-words frequency vectors as input.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--green)"></div>
+        <span class="stack-name">NLTK</span>
+      </div>
+      <p class="stack-desc">Tokenization, stopword removal, and VADER sentiment analysis. Preprocessing pipeline strips punctuation, non-alphabetic tokens, and common English stop words.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--pink)"></div>
+        <span class="stack-name">Neural Bag-of-Words</span>
+      </div>
+      <p class="stack-desc">Vectorization strategy for the MLP. Each tweet is encoded as a frequency vector over the full vocabulary — 26,836 dimensions — fed directly into a dense layer.</p>
+    </div>
+    <div class="stack-item">
+      <div class="stack-item-header">
+        <div class="stack-dot" style="background:var(--yellow)"></div>
+        <span class="stack-name">Vocab Filtering</span>
+      </div>
+      <p class="stack-desc">Custom vocabulary built from the corpus, retaining only words appearing in 2+ tweets. Rare and misspelled words are excluded before training.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ── -->
+<section class="how-section">
+  <p style="color: var(--cyan);" class="section-tag">// How It Works</p>
+  <h2>Under the Hood</h2>
+  <p>Two separate pipelines — one per model — share the same preprocessing and labeling steps.</p>
+  <div class="how-grid">
+    <div class="how-item">
+      <h3>Data Collection <span class="tag-data">twitter_data.py</span></h3>
+      <p>Tweepy's cursor API streams tweets matching keyword filters over a date range. Each tweet is cleaned — punctuation stripped, stopwords removed, links and retweet markers dropped — then written to <code>reviews.txt</code>. A vocabulary counter tracks word frequency; words appearing fewer than twice are excluded from <code>vocab.txt</code>.</p>
+    </div>
+    <div class="how-item">
+      <h3>Auto-Labeling <span class="tag-vader">VADER</span></h3>
+      <p>VADER's polarity scorer produces positive, negative, and neutral scores for each cleaned tweet. If the negative score dominates, the tweet is labeled 0. If positive dominates, it's labeled 1. Neutral tweets are discarded. Labels are saved to <code>classify.txt</code>, aligned line-by-line with <code>reviews.txt</code>.</p>
+    </div>
+    <div class="how-item">
+      <h3>CNN Model <span class="tag-model">Conv1D</span></h3>
+      <p>Tweets are integer-encoded and padded to uniform length. An embedding layer maps each word to a 100-dim vector. A Conv1D layer with 32 filters and kernel size 8 extracts local n-gram features, followed by max pooling, a dense ReLU layer, and a sigmoid output. Trained for 50 epochs with binary cross-entropy.</p>
+    </div>
+    <div class="how-item">
+      <h3>MLP Model <span class="tag-eval">Bag-of-Words</span></h3>
+      <p>Tweets are encoded as frequency vectors over the full 26,836-word vocabulary using <code>texts_to_matrix(mode='freq')</code>. A single hidden layer of 50 ReLU units feeds into a sigmoid output. Trained for 100 epochs. Higher accuracy than the CNN — the global word-frequency representation works well for short social media text.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── What I Learned ── -->
+<section class="learned-section">
+  <p style="color: var(--cyan);" class="section-tag">// Reflection</p>
+  <h2>What I Learned</h2>
+  <p>Things that weren't obvious until I built it.</p>
+  <ul class="learned-list">
+    <li>
+      <span class="learned-num">01</span>
+      <div class="learned-content">
+        <h4>Hashtag filters return spam, not opinions</h4>
+        <p>Filtering by <code>#crypto</code> pulled mostly startup promotion and bot activity — essentially useless for sentiment. Switching to phrase filters like <code>"crypto will"</code> and <code>"crypto can"</code> targeted tweets that actually expressed an opinion about the market.</p>
+      </div>
+    </li>
+    <li>
+      <span class="learned-num">02</span>
+      <div class="learned-content">
+        <h4>VADER makes large-scale labeling feasible</h4>
+        <p>Manually annotating 20,000 tweets wasn't an option. VADER's polarity scores provided automatic classification — positive, negative, or neutral — turning raw collected text into a usable training set without any manual annotation.</p>
+      </div>
+    </li>
+    <li>
+      <span class="learned-num">03</span>
+      <div class="learned-content">
+        <h4>The MLP outperformed the CNN</h4>
+        <p>95% test accuracy vs. 90% — the simpler model won. The poster notes this may be due to the structural differences between the two architectures and how each represents tweet text. Bag-of-words frequency vectors suited the MLP better than the CNN's sequence-based embedding approach.</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<footer>
+  <div class="footer-left">◆ <span>Crypto Sentiment</span> — gtullio12</div>
+  <div class="footer-right">
+    <a href="index.html">Projects</a>
+    <a href="https://github.com/gtullio12/Sentiment-Analysis-with-CNN" target="_blank">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
